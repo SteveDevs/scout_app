@@ -1,0 +1,157 @@
+<div class='container'>
+  <h2>Users</h2>
+  <?php echo $this->flashSession->output() ?>
+  <table class="table table-striped">
+    <thead>
+      <tr><th><button class="btn btn-primary" id="new-user">New</button></th></tr>
+      <tr>
+        <th scope="col">Full Name</th>
+        <th scope="col">Email Address</th>
+        <th scope="col">Phone</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="user-table-body">
+      <?php foreach ($users as $user): ?>
+        <tr>
+          <td><?php echo $user->name . ' ' . $user->surname; ?></td>
+          <td><?php echo $user->email; ?></td>
+          <td><?php echo $user->mobile; ?></td>
+          <td><?php echo $this->tag->linkTo(["scout_app/users/edit/" . $user->id, "Edit", "class" => "btn btn-secondary data-toggle='modal'"]); ?></td>
+        </tr>
+      <?php endforeach ?>
+    </tbody>
+  </table>
+</div>
+<!-- New Modal -->
+<div class="modal in fade" id="new-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">New</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      </button>
+    </div>
+    <div class="modal-body">
+      <?php $this->flashSession->output() ?>
+      <span id="splchar-error"></span>
+      <form action='users/create' id="create_user" method='POST'>
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" size="30" class="form-control" name="username" id="username" required>
+          <span id="username-error"></span>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="text" size="30" class="form-control" name="email" id="email" required>
+          <span id="email-error"></span>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" class="form-control" name="password" id="password" required>
+          <span id="password-error"></span>
+        </div>
+        <div class="form-group">
+          <label for="mobile">Mobile</label>
+          <input type="text" size="30" class="form-control" name="mobile" id="mobile">
+          <span id="phone-error"></span>
+        </div>
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" size="30" class="form-control" name="name" id="name">
+        </div>
+        <div class="form-group">
+          <label for="surname">Surname</label>
+          <input type="text" size="30" class="form-control" name="surname" id="surname">
+        </div>
+        <div class="form-group">
+          <label for="job_title">Job Title</label>
+          <input type="text" size="30" class="form-control" name="job_title" id="job_title">
+        </div>
+        <div class="form-group">
+          <label for="bio">Bio</label>
+          <textarea class="form-control" cols="30" rows="4" name="bio" id="bio"></textarea>
+        </div>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" id=''>Create</button>
+      </form>
+    </div>
+    <div class="modal-footer">
+    </div>
+  </div>
+</div>
+</div>
+<script type="text/javascript">
+
+  $('#new-modal').modal('hide');
+
+  $( "#new-user" ).on( "click", function() {
+    $('#new-modal').modal('show');
+  });
+
+  $("#create_user").submit(function(e) { 
+   e.preventDefault();
+   e.returnValue = false;
+
+   var inputs = [];
+   $("form#create_user :input").each(function(){
+     inputs.push($(this));
+   });
+   var inputCheck = true;
+   if(!splChars(inputs)){
+    $("#splchar-error").text("!@#$%^&*()_+-=[]{};\"':|,.<>\/?]+ not allowed");
+    inputCheck = false; 
+  }else{
+    $("#splchar-error").text("");
+  }
+
+  if(!validEmail($("#email").val())){
+    $("#email-error").text('Email invalid');
+    inputCheck = false;
+  }else{
+    $("#email-error").text('');
+  }
+
+  if(!validPhone($("#mobile").val())){
+    $("#phone-error").text('Invalid Phone');
+    inputCheck = false;
+  }else{
+    $("#phone-error").text('');
+  }
+  
+  if(!validPassword($("#password").val())){
+    $("#password-error").text('Invalid: 6 to 20 characters which contain at least one numeric digit, one uppercase and one lowercase letter');
+    inputCheck = false;
+  }else{
+    $("#password-error").text('');
+  }
+  if(!inputCheck){
+    return;
+  }
+  this.submit();
+   /*var $form = $(this);
+    $.ajax({ 
+     type: 'post',
+     url: "<?php echo $this->url->get('/users/unique/'); ?>", 
+     method:"POST",
+     dataType: "json",
+     data:{username: username.value, email:email.value},
+     success: function(data) { 
+      if(data.unique_fields){
+        this.submit();
+      }else{
+        if(data.username){
+          $("#username").val('');
+          $("#username-error").text('That user name is already taken.');
+        }
+        if(data.email){
+          $("#email").val('');
+          $("#email-error").text('That email  is already taken.');
+        }
+      }
+    },
+    error: function(request, status, error) {  alert(request.responseText);
+    }
+  });*/
+});
+</script>

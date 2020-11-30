@@ -1,0 +1,104 @@
+<div class='container'>
+  <h2>Edit User</h2>
+  <?php $this->flashSession->output() ?>
+
+    <?= $this->tag->form(['scout_app/users/save', 'id' => 'edit_user']) ?>
+    <input type="hidden" class="form-control" name="id" value="<?php echo $user->id; ?>" >
+    <span id="splchar-error"></span>
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" class="form-control" name="username" id="username" size="30" value="<?php echo $user->username; ?>" >
+      <span id="username-error"></span>
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="text" size="30" class="form-control" name="email" value="<?php echo $user->email; ?>" id="email" readonly>
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" class="form-control" name="password" value="<?php echo $user->password; ?>" id="password" readonly>
+    </div>
+    <div class="form-group">
+      <div class="form-group">
+        <label for="mobile">Mobile</label>
+        <input type="text" size="30" class="form-control" name="mobile" value="<?php echo $user->mobile; ?>" id="mobile">
+        <span id="phone-error"></span>
+      </div>
+      <div class="form-group">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" size="30" class="form-control" name="name" value="<?php echo $user->name; ?>" id="name">
+        </div>
+        <div class="form-group">
+          <div class="form-group">
+            <label for="surname">Surname</label>
+            <input type="text" size="30" class="form-control" name="surname" value="<?php echo $user->surname; ?>" id="surname">
+          </div>
+          <div class="form-group">
+            <div class="form-group">
+              <label for="job_title">Job Title</label>
+              <input type="text" size="30" class="form-control" name="job_title" value="<?php echo $user->job_title; ?>" id="job_title">
+            </div>
+            <div class="form-group">
+              <div class="form-group">
+                <label for="bio">Bio</label>
+                <textarea class="form-control" cols="30" rows="4" name="bio" id="bio"><?php echo $user->bio; ?></textarea>
+              </div>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save changes</button>
+            </form>
+          </div>
+          <script>
+           $("#edit_user").submit(function(e) { 
+             e.preventDefault();
+             e.returnValue = false;
+
+             var inputs = [];
+             $("form#edit_user :input").each(function(){
+               inputs.push($(this));
+             });
+             var inputCheck = true;
+             if(!splChars(inputs)){
+              $("#splchar-error").text("!@#$%^&*()_+-=[]{};\"':|,.<>\/?]+ not allowed");
+              inputCheck = false; 
+            }else{
+              $("#splchar-error").text("");
+            }
+
+            if(!validPhone($("#mobile").val())){
+              $("#phone-error").text('Invalid Phone');
+              inputCheck = false;
+            }else{
+              $("#phone-error").text('');
+            }
+
+            if(!inputCheck){
+              return;
+            }
+            this.submit();
+   /*var $form = $(this);
+    $.ajax({ 
+     type: 'post',
+     url: "<?php echo $this->url->get('users/unique/'); ?>", 
+     method:"POST",
+     dataType: "json",
+     data:{username: username.value, email:email.value},
+     success: function(data) { 
+      if(data.unique_fields){
+        this.submit();
+      }else{
+        if(data.username){
+          $("#username").val('');
+          $("#username-error").text('That user name is already taken.');
+        }
+        if(data.email){
+          $("#email").val('');
+          $("#email-error").text('That email  is already taken.');
+        }
+      }
+    },
+    error: function(request, status, error) {  alert(request.responseText);
+    }
+  });*/
+});
+</script>
